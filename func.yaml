@@ -1,0 +1,14 @@
+# $schema: https://raw.githubusercontent.com/knative/func/3804dc9b/schema/func_yaml-schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/knative/func/3804dc9b/schema/func_yaml-schema.json
+specVersion: 0.36.0
+name: temp
+runtime: go
+registry: docker.io/4yuxh
+created: 2026-05-17T18:09:08.779771146+05:30
+build:
+  git:
+    url: git@github.com:24aysh/test-func-knative.git
+    revision: main
+  builder: pack
+deploy:
+  image: index.docker.io/4yuxh/temp:latest

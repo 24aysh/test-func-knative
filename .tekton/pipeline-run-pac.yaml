@@ -1,0 +1,55 @@
+
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  labels:
+    "function.knative.dev/name": "temp"
+    "function.knative.dev/runtime": "go"
+    
+    tekton.dev/pipeline: func-1f97ff6a-pack-git
+  annotations:
+    # The event we are targeting as seen from the webhook payload
+    # this can be an array too, i.e: [pull_request, push]
+    pipelinesascode.tekton.dev/on-event: "[push]"
+
+    # The branch or tag we are targeting (ie: main, refs/tags/*)
+    pipelinesascode.tekton.dev/on-target-branch: "[main]"
+
+    # How many runs we want to keep attached to this event
+    pipelinesascode.tekton.dev/max-keep-runs: "5"
+
+    # User defined Annotations
+    
+  generateName: func-1f97ff6a-pack-git-run
+spec:
+  params:
+    - name: gitRepository
+      value: "{{ repo_url }}"
+    - name: gitRevision
+      value: "{{ revision }}"
+    - name: contextDir
+      value: ""
+    - name: imageName
+      value: index.docker.io/4yuxh/temp:latest
+    - name: registry
+      value: docker.io/4yuxh
+    - name: builderImage
+      value: ghcr.io/knative/builder-jammy-tiny:v2
+    - name: buildEnvs
+      value:
+        - =
+        
+  pipelineRef:
+   name: func-1f97ff6a-pack-git
+  workspaces:
+    - name: source-workspace
+      persistentVolumeClaim:
+        claimName: func-1f97ff6a-pack-git-pvc
+      subPath: source
+    - name: cache-workspace
+      persistentVolumeClaim:
+        claimName: func-1f97ff6a-pack-git-pvc
+      subPath: cache
+    - name: dockerconfig-workspace
+      secret:
+        secretName: func-1f97ff6a-pack-git-secret
